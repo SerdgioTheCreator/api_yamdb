@@ -22,7 +22,8 @@ class User(AbstractUser):
     )
     confirmation_code = models.CharField(
         max_length=20,
-        blank=True
+        blank=True,
+        null=True
     )
     
     

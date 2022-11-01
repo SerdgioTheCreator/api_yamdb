@@ -32,22 +32,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'This username is not allowed!')
         return data
-    
-    def create(self, validated_data):
-        user = User.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            confirmation_code=get_random_string(length=5)
-        )
-        user.save()
-        send_mail(
-            'Confirmation code',
-            f'Here is your code: {user.confirmation_code}.',
-            'from@example.com',
-            ['to@example.com'],
-            fail_silently=False,
-        )
-        return user
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -65,6 +49,20 @@ class GetTokenSerializer(serializers.Serializer):
         return data
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        required=True,
+        validators=[UniqueValidator(
+            queryset=User.objects.all(),
+            message='This username is already taken.'
+        )]
+    )
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(
+            queryset=User.objects.all(),
+            message='This email is already being used by another user.'
+        )]
+    )
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'bio', 'role']
