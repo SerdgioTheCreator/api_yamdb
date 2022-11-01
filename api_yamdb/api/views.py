@@ -1,9 +1,24 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 
-from .models import Review
+from reviews.models import Categories, Genre, Title, Review
 from .permissions import IsAuthorOrReadOnly
-from .serializers import CommentSerializer
+from .serializers import CategoriesSerializer, GenreSerializers, TitleSerializers, CommentSerializer
+
+
+class TitleListView(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializers
+
+
+class GenreListView(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializers
+
+
+class CategoriesListView(viewsets.ModelViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
