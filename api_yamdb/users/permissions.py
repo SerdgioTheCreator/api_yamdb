@@ -7,8 +7,7 @@ class AdminOrMyselfOnly(permissions.BasePermission):
     '''
     def has_permission(self, request, view):
         return (
-            request.user.is_authenticated
-            and request.user.is_admin
+            request.user.is_authenticated and request.user.is_admin
             or request.user.is_staff
         )
 
@@ -28,12 +27,12 @@ class AdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
-            or request.user.is_admin
+            or request.user.is_authenticated and request.user.is_admin
             or request.user.is_staff
         )
 
 
-class AdminOrModerOrAuthor(permissions.BasePermission):
+class AdminOrModeratorOrAuthor(permissions.BasePermission):
     '''
     Permission for users to control reviews or comments
     and admins or moderators to have full access.
