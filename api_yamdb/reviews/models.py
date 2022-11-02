@@ -3,13 +3,19 @@ from users.models import User
 
 
 class Categories(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(unique=True, max_length=50)
+    name = models.CharField(max_length=256, unique=True)
+    slug = models.SlugField(
+        max_length=50, unique=True, null=True,
+        verbose_name='Slug категории', db_index=True
+    )
 
 
 class Genre(models.Model):
-    name = models.TextField()
-    slug = models.SlugField(unique=True)
+    name = models.CharField(max_length=256, unique=True)
+    slug = models.SlugField(
+        unique=True, max_length=50, null=True,
+        verbose_name='Slug жанра', db_index=True
+    )
 
 
 class Title(models.Model):
@@ -18,14 +24,17 @@ class Title(models.Model):
     description = models.TextField()
     genre = models.ManyToManyField(
         Genre,
-        related_name='genres'
+        related_name='titles',
+        db_index=True,
+        blank=True,
+        verbose_name='Жанр'
     )
     category = models.ForeignKey(
         Categories,
         on_delete=models.SET_NULL,
+        blank=True, null=True,
         related_name='titles',
-        null=True,
-        blank=True,
+        verbose_name='Категория'
     )
 
 
