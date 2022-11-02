@@ -1,37 +1,31 @@
-
-from rest_framework import generics, status, viewsets
-from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.decorators import action
-from django.utils.crypto import get_random_string
-from django.core.mail import send_mail
-
-from .permissions import OwnerOrAdminOnly
-from .serializers import UserSerializer, RegisterSerializer, GetTokenSerializer
 
 from .models import User
+from .permissions import AdminOrMyselfOnly
+from .serializers import GetTokenSerializer, RegisterSerializer, UserSerializer
+from .utils import create_and_send_code
 
 
-def conf_code_send(email):
-    code = get_random_string(length=5)
-    send_mail(
-            'Confirmation code',
-            f'Here is your code: {code}.',
-            'from@example.com',
-            [f'{email}'],
-            fail_silently=False,
-        )
-    
 class UserViewSet(viewsets.ModelViewSet):
+    '''Viewset for User endpoints with 'me' endpoint included.'''
     queryset = User.objects.all()
-    permission_classes = (OwnerOrAdminOnly,)
+    permission_classes = [AdminOrMyselfOnly]
     serializer_class = UserSerializer
     lookup_field = 'username'
-    
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=[IsAuthenticated],
-            url_path='me', url_name='me')
+
+    @action(
+        methods=['GET', 'PATCH'],
+        detail=False,
+        permission_classes=[IsAuthenticated],
+        url_path='me',
+        url_name='me'
+    )
     def retrieve_patch_me(self, request):
         if request.method == 'PATCH':
             serializer = UserSerializer(
@@ -43,33 +37,42 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-#Class based view to register user
-class RegisterUserAPIView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class = RegisterSerializer
-    
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        response.data.confirmation_code=conf_code_send(response.data.get("email"))
-        # send_mail(
-        #     'Confirmation code',
-        #     f'Here is your code: {response.data.confirmation_code}.',
-        #     'from@example.com',
-        #     [f'{response.data.get("email")}'],
-        #     fail_silently=False,
-        # )
-        return Response(response.data, status=status.HTTP_200_OK)
 
-        
+class RegisterUserAPIView(APIView):
+    '''Viewset for User registration.'''
+    permission_classes = [AllowAny]
+    serializer_class = RegisterSerializer
+
+    def post(self, request):
+        username = request.data.get('username')
+        if not User.objects.filter(username=username).exists():
+            serializer = RegisterSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            create_and_send_code(username)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        user = get_object_or_404(User, username=username)
+        serializer = RegisterSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        if serializer.validated_data['email'] == user.email:
+            serializer.save()
+            create_and_send_code(username)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {'error': 'This email is already being used by another user.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
 class ObtainTokenView(APIView):
-    permission_classes = (AllowAny,)
+    '''Viewset for User to get authorization token.'''
+    permission_classes = [AllowAny]
     serializer_class = GetTokenSerializer
-    
+
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         user = User.objects.get(username=serializer.validated_data['username'])
         refresh = RefreshToken.for_user(user)
         token = {'token': str(refresh.access_token)}
