@@ -18,6 +18,15 @@ class GenreSerializers(serializers.ModelSerializer):
 
 
 class TitleSerializers(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
 
     class Meta:
         fields = '__all__'
