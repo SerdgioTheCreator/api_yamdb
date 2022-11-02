@@ -2,10 +2,6 @@ from django.db import models
 from users.models import User
 
 
-class Review(models.Model):
-    pass
-
-
 class Categories(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True, max_length=50)
@@ -36,6 +32,34 @@ class Title(models.Model):
     )
 
 
+class Review(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Отзыв'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Автор отзыва'
+    )
+    text = models.TextField(verbose_name='Текст отзыва')
+    score = models.IntegerField(blank=True, null=True)
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации отзыва',
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = 'отзыв'
+        verbose_name_plural = 'отзывы'
+
+    def __str__(self):
+        return self.text
+
+
 class Comment(models.Model):
     review = models.ForeignKey(
         Review,
@@ -50,9 +74,9 @@ class Comment(models.Model):
         verbose_name='Автор комментария',
     )
     text = models.TextField(verbose_name='Текст комментария')
-    created = models.DateTimeField(
+    pub_date = models.DateTimeField(
         verbose_name='Дата публикации комментария',
-        auto_now_add=True,
+        auto_now_add=True
     )
 
     class Meta:
