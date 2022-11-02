@@ -38,6 +38,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Review
