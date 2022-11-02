@@ -3,18 +3,18 @@ from rest_framework import viewsets
 
 from reviews.models import Categories, Genre, Title, Review
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (CategoriesSerializer, CommentSerializer, GenreSerializers,
-                          ReviewSerializer, TitleSerializers)
+from .serializers import (CategoriesSerializer, CommentSerializer, GenreSerializer,
+                          ReviewSerializer, TitleSerializer)
 
 
 class TitleListView(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializers
+    serializer_class = TitleSerializer
 
 
 class GenreListView(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
-    serializer_class = GenreSerializers
+    serializer_class = GenreSerializer
 
 
 class CategoriesListView(viewsets.ModelViewSet):

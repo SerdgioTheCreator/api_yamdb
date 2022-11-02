@@ -10,14 +10,14 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
 
 
-class GenreSerializers(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = '__all__'
         model = Genre
 
 
-class TitleSerializers(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Categories.objects.all()
