@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
+from rest_framework.pagination import LimitOffsetPagination
 
 from reviews.models import Categories, Genre, Title, Review
 from .permissions import IsAuthorOrReadOnly
@@ -9,16 +10,19 @@ from .serializers import CategoriesSerializer, GenreSerializers, TitleSerializer
 class TitleListView(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializers
+    pagination_class = LimitOffsetPagination
 
 
 class GenreListView(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializers
+    pagination_class = LimitOffsetPagination
 
 
 class CategoriesListView(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    pagination_class = LimitOffsetPagination
 
 
 class CommentViewSet(viewsets.ModelViewSet):
