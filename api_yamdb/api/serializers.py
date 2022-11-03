@@ -1,4 +1,6 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Categories, Comment, Genre, Review, Title
 
@@ -25,6 +27,7 @@ class TitleSerializer(serializers.ModelSerializer):
         read_only=True,
         many=True
     )
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -48,16 +51,33 @@ class TitlePostSerializer(serializers.ModelSerializer):
         model = Title
 
 
+class TitleDefault:
+    requires_context = True
+
+    def __call__(self, data):
+        return get_object_or_404(
+            Title,
+            id=data.context['view'].kwargs.get('title_id')
+        )
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
-        slug_field='username'
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
     )
-    title = serializers.PrimaryKeyRelatedField(read_only=True)
+    title = serializers.HiddenField(default=TitleDefault())
 
     class Meta:
-        model = Review
         fields = '__all__'
+        model = Review
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['author', 'title']
+            )
+        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
