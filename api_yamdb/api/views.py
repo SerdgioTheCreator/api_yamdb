@@ -23,11 +23,12 @@ class CreateDestroyListViewSet(
 
 
 class TitleListView(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')).all().order_by('id')
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly, )
     filter_backends = (DjangoFilterBackend,)
-    filter_class = TitleFilter
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

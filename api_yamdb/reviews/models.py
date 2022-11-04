@@ -9,6 +9,11 @@ class Categories(models.Model):
         verbose_name='Slug категории', db_index=True
     )
 
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+        ordering = ['-id']
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=256, unique=True)
@@ -16,6 +21,11 @@ class Genre(models.Model):
         unique=True, max_length=50, null=True,
         verbose_name='Slug жанра', db_index=True
     )
+
+    class Meta:
+        verbose_name = "Жанр"
+        verbose_name_plural = "Жанры"
+        ordering = ['-id']
 
 
 class Title(models.Model):
@@ -36,6 +46,10 @@ class Title(models.Model):
         related_name='titles',
         verbose_name='Категория'
     )
+
+    class Meta:
+        verbose_name = "Произведение"
+        verbose_name_plural = "Произведения"
 
 
 class Review(models.Model):
@@ -61,6 +75,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -94,6 +109,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
+        ordering = ['-id']
 
     def __str__(self):
         return self.text
