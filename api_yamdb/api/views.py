@@ -8,8 +8,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, SAFE_METHODS
 from reviews.models import Categories, Genre, Title, Review
 from users.permissions import AdminOrReadOnly, AdminOrModeratorOrAuthor
 from .filter import TitleFilter
-from .serializers import (CategoriesSerializer, CommentSerializer, GenreSerializer,
-                          ReviewSerializer, TitleSerializer, TitlePostSerializer)
+from .serializers import (CategoriesSerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer,
+                          TitleSerializer, TitlePostSerializer)
 
 
 class CreateDestroyListViewSet(
@@ -54,7 +55,7 @@ class CategoriesListView(CreateDestroyListViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor)
+    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor, )
 
     def get_queryset(self):
         return get_object_or_404(
@@ -72,7 +73,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor)
+    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor, )
 
     def get_queryset(self):
         return get_object_or_404(
