@@ -55,7 +55,8 @@ class CategoriesListView(CreateDestroyListViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor, )
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          AdminOrModeratorOrAuthor, )
 
     def get_queryset(self):
         return get_object_or_404(
@@ -73,7 +74,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, AdminOrModeratorOrAuthor, )
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          AdminOrModeratorOrAuthor, )
 
     def get_queryset(self):
         return get_object_or_404(
