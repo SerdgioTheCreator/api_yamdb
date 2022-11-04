@@ -9,6 +9,9 @@ class Categories(models.Model):
         verbose_name='Slug категории', db_index=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=256, unique=True)
@@ -16,6 +19,9 @@ class Genre(models.Model):
         unique=True, max_length=50, null=True,
         verbose_name='Slug жанра', db_index=True
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
