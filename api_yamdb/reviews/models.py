@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -13,6 +14,7 @@ class Categories(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -28,6 +30,7 @@ class Genre(models.Model):
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
+        ordering = ['-id']
 
     def __str__(self):
         return self.name
@@ -36,6 +39,7 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=300)
     year = models.IntegerField()
+    # rating =
     description = models.TextField()
     genre = models.ManyToManyField(
         Genre,
@@ -93,6 +97,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -126,6 +131,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
+        ordering = ['-id']
 
     def __str__(self):
         return self.text
