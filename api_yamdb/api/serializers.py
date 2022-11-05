@@ -79,6 +79,12 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         ]
 
+    # def validate_score(self, score):
+    #     if not 1 <= score <= 10:
+    #         raise serializers.ValidationError(
+    #             'Score should be set in the range from 1 to 10.')
+    #     return score
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
