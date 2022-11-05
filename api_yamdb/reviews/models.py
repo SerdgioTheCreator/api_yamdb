@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from users.models import User
 
@@ -12,7 +13,9 @@ class Categories(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['-id']
+
+    def __str__(self):
+        return self.name
 
 
 class Genre(models.Model):
@@ -25,7 +28,9 @@ class Genre(models.Model):
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
-        ordering = ['-id']
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -66,7 +71,20 @@ class Review(models.Model):
         verbose_name='Автор отзыва'
     )
     text = models.TextField(verbose_name='Текст отзыва')
-    score = models.IntegerField(blank=True, null=True)
+    score = models.IntegerField(
+        blank=True,
+        null=True,
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message='Score should be equal or higher than 1.'
+            ),
+            MaxValueValidator(
+                limit_value=10,
+                message='Score should be equal or less than 10.'
+            )
+        ]
+    )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации отзыва',
         auto_now_add=True
@@ -75,7 +93,6 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
-        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -109,7 +126,6 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
-        ordering = ['-id']
 
     def __str__(self):
         return self.text
