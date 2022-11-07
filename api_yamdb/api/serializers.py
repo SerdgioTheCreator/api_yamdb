@@ -13,7 +13,6 @@ from users.models import User
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
@@ -21,7 +20,6 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')

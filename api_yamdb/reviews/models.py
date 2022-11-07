@@ -19,7 +19,7 @@ class AbstractModel(models.Model):
 
 class Categories(AbstractModel):
     slug = models.SlugField(
-        max_length=50, unique=True, null=True,
+        max_length=50, unique=True,
         verbose_name='Slug категории', db_index=True
     )
 
@@ -30,7 +30,7 @@ class Categories(AbstractModel):
 
 class Genre(AbstractModel):
     slug = models.SlugField(
-        max_length=50, unique=True, null=True,
+        max_length=50, unique=True,
         verbose_name='Slug жанра', db_index=True
     )
 

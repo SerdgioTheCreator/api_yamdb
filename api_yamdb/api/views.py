@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, status
+from rest_framework import viewsets, mixins, status, filters
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -37,11 +37,13 @@ class CreateDestroyListViewSet(
 
 class TitleListView(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
-        rating=Avg('reviews__score')).all().order_by('id')
+        rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly, )
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = TitleFilter
+    # ordering_fields = ['queryset']
+    ordering = ['id']
 
 
 class GenreListView(CreateDestroyListViewSet):
