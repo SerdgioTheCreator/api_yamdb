@@ -22,10 +22,13 @@ api_v1_router.register(
     basename='comments'
 )
 
+auth_urls = [
+    path('signup/', RegisterUserAPIView.as_view(), name='signup'),
+    path('token/', ObtainTokenView.as_view(), name='token'),
+]
 
 urlpatterns = [
     path('v1/', include(api_v1_router.urls)),
     # Authorization
-    path('v1/auth/signup/', RegisterUserAPIView.as_view(), name='signup'),
-    path('v1/auth/token/', ObtainTokenView.as_view(), name='token_obtain'),
+    path('v1/auth/', include(auth_urls)),
 ]
