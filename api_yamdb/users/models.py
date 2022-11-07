@@ -18,7 +18,6 @@ class User(AbstractUser):
         (ROLE_ADMIN, 'Администратор')
     )
     username = models.CharField(
-        'Имя пользователя',
         max_length=AUTH_USERNAME_MAXLENGTH,
         unique=True,
         validators=(UsernameValidator(),),
@@ -26,27 +25,23 @@ class User(AbstractUser):
         verbose_name='Имя пользователя'
     )
     email = models.EmailField(
-        'Адрес электронной почты',
         max_length=AUTH_EMAIL_MAXLENGTH,
         unique=True,
         error_messages={'unique': "Такой адрес уже зарегистрирован."},
         verbose_name='Адрес электронной почты'
     )
     bio = models.TextField(
-        'О себе',
         blank=True,
         null=True,
         verbose_name='О себе'
     )
     role = models.CharField(
-        'Ролевая группа',
         max_length=max(len(role[0]) for role in ROLE_CHOICES),
         choices=ROLE_CHOICES,
         default=ROLE_USER,
         verbose_name='Ролевая группа'
     )
     confirmation_code = models.CharField(
-        'Код подтверждения',
         max_length=AUTH_CONF_CODE_MAXLENGTH,
         blank=True,
         null=True,
@@ -54,8 +49,8 @@ class User(AbstractUser):
     )
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
         ordering = ('-id',)
 
     @property
