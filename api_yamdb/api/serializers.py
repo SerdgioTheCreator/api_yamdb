@@ -6,7 +6,7 @@ from reviews.models import Categories, Comment, Genre, Review, Title
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    slug = serializers.SlugField()
+    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
@@ -14,7 +14,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    slug = serializers.SlugField()
+    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')

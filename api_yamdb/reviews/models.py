@@ -8,26 +8,32 @@ from users.models import User
 
 class AbstractModel(models.Model):
     name = models.CharField(max_length=256, unique=True)
-    slug = models.SlugField(
-        max_length=50, unique=True, null=True,
-        verbose_name='Slug категории', db_index=True
-    )
 
     class Meta:
         abstract = True
-        ordering = ['-id', '-name']
+        ordering = ['-id', 'name']
 
     def __str__(self):
         return self.name
 
 
 class Categories(AbstractModel):
+    slug = models.SlugField(
+        max_length=50, unique=True, null=True,
+        verbose_name='Slug категории', db_index=True
+    )
+
     class Meta(AbstractModel.Meta):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
 
 class Genre(AbstractModel):
+    slug = models.SlugField(
+        max_length=50, unique=True, null=True,
+        verbose_name='Slug жанра', db_index=True
+    )
+
     class Meta(AbstractModel.Meta):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
