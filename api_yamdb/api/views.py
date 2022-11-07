@@ -5,8 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import (IsAuthenticated,
-                                        SAFE_METHODS)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -18,14 +17,10 @@ from .permissions import (AdminOrReadOnly,
 from .filter import TitleFilter
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
-                          TitleSerializer, TitlePostSerializer,
-                          GetTokenSerializer, RegisterSerializer,
-                          UserSerializer)
-from users.models import User
-
-
-from .serializers import GetTokenSerializer, RegisterSerializer, UserSerializer
+                          TitleSerializer, GetTokenSerializer,
+                          RegisterSerializer, UserSerializer)
 from .utils import create_and_send_code
+from users.models import User
 
 
 class CreateDestroyListViewSet(
