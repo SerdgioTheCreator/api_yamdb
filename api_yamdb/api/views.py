@@ -10,7 +10,7 @@ from users.permissions import AdminOrReadOnly, AdminOrModeratorOrAuthor
 from .filter import TitleFilter
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
-                          TitleSerializer, TitlePostSerializer)
+                          TitleSerializer)
 
 
 class CreateDestroyListViewSet(
@@ -19,7 +19,10 @@ class CreateDestroyListViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    pass
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
+    search_fields = ('slug', 'name')
+    lookup_field = 'slug'
 
 
 class TitleListView(viewsets.ModelViewSet):
@@ -30,28 +33,15 @@ class TitleListView(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
-    def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
-            return TitleSerializer
-        return TitlePostSerializer
-
 
 class GenreListView(CreateDestroyListViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (AdminOrReadOnly,)
-    filter_backends = (SearchFilter,)
-    search_fields = ('slug', 'name')
-    lookup_field = 'slug'
 
 
 class CategoriesListView(CreateDestroyListViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = (AdminOrReadOnly,)
-    filter_backends = (SearchFilter,)
-    search_fields = ('slug', 'name')
-    lookup_field = 'slug'
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

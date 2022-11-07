@@ -6,6 +6,7 @@ from reviews.models import Categories, Comment, Genre, Review, Title
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
@@ -13,6 +14,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
@@ -20,21 +22,6 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    category = CategoriesSerializer(
-        read_only=True
-    )
-    genre = GenreSerializer(
-        read_only=True,
-        many=True
-    )
-    rating = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        fields = '__all__'
-        model = Title
-
-
-class TitlePostSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Categories.objects.all()
@@ -45,10 +32,17 @@ class TitlePostSerializer(serializers.ModelSerializer):
         queryset=Genre.objects.all(),
         many=True
     )
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['genre'] = GenreSerializer(instance.genre, many=True).data
+        response['category'] = CategoriesSerializer(instance.category).data
+        return response
 
 
 class TitleDefault:
