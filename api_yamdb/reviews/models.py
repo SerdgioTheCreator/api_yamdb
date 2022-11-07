@@ -7,7 +7,7 @@ from users.models import User
 
 
 class AbstractModel(models.Model):
-    name = models.CharField(max_length=256, unique=True)
+    name = models.CharField(max_length=256, unique=True) # Все константы вынести в сеттингс
 
     class Meta:
         abstract = True
