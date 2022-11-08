@@ -39,7 +39,6 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=300)
     year = models.IntegerField()
-    # rating =
     description = models.TextField()
     genre = models.ManyToManyField(
         Genre,
@@ -59,6 +58,10 @@ class Title(models.Model):
     class Meta:
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
 
 
 class Review(models.Model):
@@ -75,7 +78,7 @@ class Review(models.Model):
         verbose_name='Автор отзыва'
     )
     text = models.TextField(verbose_name='Текст отзыва')
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
         validators=[
@@ -97,7 +100,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
-        ordering = ['-id']
+        ordering = ('-pub_date', )
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],

@@ -5,9 +5,9 @@ from rest_framework import viewsets, mixins
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, SAFE_METHODS
 
+from .filter import TitleFilter
 from reviews.models import Categories, Genre, Title, Review
 from users.permissions import AdminOrReadOnly, AdminOrModeratorOrAuthor
-from .filter import TitleFilter
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleSerializer, TitlePostSerializer)
