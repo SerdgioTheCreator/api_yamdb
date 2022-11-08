@@ -1,8 +1,15 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 from rest_framework.validators import UniqueTogetherValidator
 
+from .validators import UsernameValidator
+from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
+                                AUTH_EMAIL_MAXLENGTH,
+                                AUTH_CONF_CODE_MAXLENGTH)
 from reviews.models import Categories, Comment, Genre, Review, Title
+from users.models import User
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -20,21 +27,6 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    category = CategoriesSerializer(
-        read_only=True
-    )
-    genre = GenreSerializer(
-        read_only=True,
-        many=True
-    )
-    rating = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        fields = '__all__'
-        model = Title
-
-
-class TitlePostSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Categories.objects.all()
@@ -45,10 +37,17 @@ class TitlePostSerializer(serializers.ModelSerializer):
         queryset=Genre.objects.all(),
         many=True
     )
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['genre'] = GenreSerializer(instance.genre, many=True).data
+        response['category'] = CategoriesSerializer(instance.category).data
+        return response
 
 
 class TitleDefault:
@@ -96,3 +95,49 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+
+
+class AuthSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        max_length=AUTH_USERNAME_MAXLENGTH,
+        required=True,
+        validators=(UsernameValidator(),)
+    )
+
+
+class RegisterSerializer(AuthSerializer):
+    email = serializers.EmailField(
+        max_length=AUTH_EMAIL_MAXLENGTH,
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+
+class GetTokenSerializer(AuthSerializer):
+    confirmation_code = serializers.CharField(
+        max_length=AUTH_CONF_CODE_MAXLENGTH,
+        required=True
+    )
+
+    def validate(self, data):
+        try:
+            username = data.get('username')
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise NotFound(
+                detail=f'Пользователя с именем {username} не существует.'
+            )
+        if user.confirmation_code != data.get('confirmation_code'):
+            raise serializers.ValidationError(
+                'Некорректный код подтверждения.')
+        return data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name',
+                  'last_name', 'bio', 'role')

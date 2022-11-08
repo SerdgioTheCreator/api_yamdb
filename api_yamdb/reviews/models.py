@@ -1,44 +1,55 @@
+from datetime import datetime
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from users.models import User
 
 
-class Categories(models.Model):
+class AbstractModel(models.Model):
     name = models.CharField(max_length=256, unique=True)
+
+    class Meta:
+        abstract = True
+        ordering = ['-id', 'name']
+
+    def __str__(self):
+        return self.name
+
+
+class Categories(AbstractModel):
     slug = models.SlugField(
-        max_length=50, unique=True, null=True,
+        max_length=50, unique=True,
         verbose_name='Slug категории', db_index=True
     )
 
-    class Meta:
+    class Meta(AbstractModel.Meta):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['-id']
-
-    def __str__(self):
-        return self.name
 
 
-class Genre(models.Model):
-    name = models.CharField(max_length=256, unique=True)
+class Genre(AbstractModel):
     slug = models.SlugField(
-        unique=True, max_length=50, null=True,
+        max_length=50, unique=True,
         verbose_name='Slug жанра', db_index=True
     )
 
-    class Meta:
+    class Meta(AbstractModel.Meta):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
-        ordering = ['-id']
-
-    def __str__(self):
-        return self.name
 
 
 class Title(models.Model):
     name = models.CharField(max_length=300)
-    year = models.IntegerField()
+    year = models.PositiveSmallIntegerField(
+        validators=[
+            MaxValueValidator(datetime.now().year),
+            MinValueValidator(1)
+        ],
+        null=True,
+        verbose_name='Год создания произведения'
+    )
+    # rating =
     description = models.TextField()
     genre = models.ManyToManyField(
         Genre,
@@ -56,12 +67,12 @@ class Title(models.Model):
     )
 
     class Meta:
-        verbose_name = "Произведение"
-        verbose_name_plural = "Произведения"
-        ordering = ('name', )
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
+        ordering = ['-name']
 
     def __str__(self):
-        return self.name
+        return self.name[:50]
 
 
 class Review(models.Model):
