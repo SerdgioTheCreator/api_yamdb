@@ -3,7 +3,8 @@ from rest_framework import permissions
 
 class AdminOrMyselfOnly(permissions.BasePermission):
     """
-    Разрешение пользователям изменять свой профиль, у администраторов полный доступ.
+    Разрешение пользователям изменять свой профиль,
+    у администраторов полный доступ.
     """
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin
