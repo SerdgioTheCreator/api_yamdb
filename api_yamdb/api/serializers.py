@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
@@ -67,6 +68,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     title = serializers.HiddenField(default=TitleDefault())
+    score = serializers.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
 
     class Meta:
         fields = '__all__'
@@ -77,12 +81,6 @@ class ReviewSerializer(serializers.ModelSerializer):
                 fields=['author', 'title']
             )
         ]
-
-    # def validate_score(self, score):
-    #     if not 1 <= score <= 10:
-    #         raise serializers.ValidationError(
-    #             'Score should be set in the range from 1 to 10.')
-    #     return score
 
 
 class CommentSerializer(serializers.ModelSerializer):
