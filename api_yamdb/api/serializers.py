@@ -9,7 +9,7 @@ from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
                                 AUTH_EMAIL_MAXLENGTH,
                                 AUTH_CONF_CODE_MAXLENGTH)
 from .validators import UsernameValidator
-from reviews.models import Categories, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
@@ -17,7 +17,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('name', 'slug')
-        model = Categories
+        model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
-        queryset=Categories.objects.all()
+        queryset=Category.objects.all()
     )
 
     genre = serializers.SlugRelatedField(

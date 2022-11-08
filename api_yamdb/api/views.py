@@ -19,7 +19,7 @@ from .serializers import (CategoriesSerializer, CommentSerializer,
                           RegisterSerializer, ReviewSerializer,
                           TitleSerializer, UserSerializer)
 from .utils import create_and_send_code
-from reviews.models import Categories, Genre, Review, Title
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
 
@@ -52,7 +52,7 @@ class GenreListView(CreateDestroyListViewSet):
 
 
 class CategoriesListView(CreateDestroyListViewSet):
-    queryset = Categories.objects.all()
+    queryset = Category.objects.all()
     serializer_class = CategoriesSerializer
 
 

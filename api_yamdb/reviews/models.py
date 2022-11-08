@@ -40,7 +40,7 @@ class AbstractReviewCommentModel(models.Model):
         ordering = ['-id', '-pub_date', ]
 
 
-class Categories(AbstractModel):
+class Category(AbstractModel):
     slug = models.SlugField(
         max_length=settings.SLUG_LENGTH, unique=True,
         verbose_name='Slug категории', db_index=True
@@ -84,7 +84,7 @@ class Title(models.Model):
         verbose_name='Жанр'
     )
     category = models.ForeignKey(
-        Categories,
+        Category,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='titles',
