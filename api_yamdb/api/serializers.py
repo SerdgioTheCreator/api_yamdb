@@ -4,10 +4,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 from rest_framework.validators import UniqueTogetherValidator
 
-from .validators import UsernameValidator
 from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
                                 AUTH_EMAIL_MAXLENGTH,
                                 AUTH_CONF_CODE_MAXLENGTH)
+from .validators import UsernameValidator
 from reviews.models import Categories, Comment, Genre, Review, Title
 from users.models import User
 
@@ -90,11 +90,11 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Comment
         fields = '__all__'
+        read_only_fields = ('review', )
 
 
 class AuthSerializer(serializers.Serializer):

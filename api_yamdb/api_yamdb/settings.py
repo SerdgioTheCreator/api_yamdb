@@ -119,3 +119,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 EMAIL_CONFIRMATION = 'admin@reviews.com'
+
+TEXT_CUTTER_30 = 30
+
+TITLE_NAME_LENGTH = 300
+
+NAME_LENGTH = 256
+
+TEXT_CUTTER_50 = 50

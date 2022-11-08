@@ -2,17 +2,17 @@ from rest_framework import permissions
 
 
 class AdminOrMyselfOnly(permissions.BasePermission):
-    '''
-    Permission for users to alter their profile and admins to have full access.
-    '''
+    """
+    Разрешение пользователям изменять свой профиль, у администраторов полный доступ.
+    """
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin
 
 
 class AdminOrReadOnly(permissions.BasePermission):
-    '''
-    Permission read only for everyoneand admins to have full access.
-    '''
+    """
+    Разрешение "только для чтения" для всех, у администраторов полный доступ.
+    """
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
@@ -21,10 +21,10 @@ class AdminOrReadOnly(permissions.BasePermission):
 
 
 class AdminOrModeratorOrAuthor(permissions.IsAuthenticatedOrReadOnly):
-    '''
-    Permission for users to control reviews or comments
-    and admins or moderators to have full access.
-    '''
+    """
+    Разрешение пользователям управлять отзывами и комментариями,
+    у администраторов и модераторов полный доступ.
+    """
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS

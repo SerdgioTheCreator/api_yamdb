@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, status, filters
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -10,16 +10,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Categories, Genre, Title, Review
+from .filter import TitleFilter
 from .permissions import (AdminOrReadOnly,
                           AdminOrModeratorOrAuthor,
                           AdminOrMyselfOnly)
-from .filter import TitleFilter
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleSerializer, GetTokenSerializer,
-                          RegisterSerializer, UserSerializer)
+                          GenreSerializer, GetTokenSerializer,
+                          RegisterSerializer, ReviewSerializer,
+                          TitleSerializer, UserSerializer)
 from .utils import create_and_send_code
+from reviews.models import Categories, Genre, Review, Title
 from users.models import User
 
 
@@ -43,7 +43,7 @@ class TitleListView(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = TitleFilter
     # ordering_fields = ['queryset']
-    ordering = ['id']
+    ordering = ['id', ]
 
 
 class GenreListView(CreateDestroyListViewSet):
@@ -92,7 +92,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    '''Вьюсет для пользователя с эндпоинтом /me.'''
+    """Вьюсет для пользователя с эндпоинтом /me."""
+
     queryset = User.objects.all()
     permission_classes = [AdminOrMyselfOnly]
     serializer_class = UserSerializer
@@ -118,7 +119,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class RegisterUserAPIView(APIView):
-    '''Регистрация пользователя и получение кода подтверждения.'''
+    """Регистрация пользователя и получение кода подтверждения."""
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -138,7 +139,7 @@ class RegisterUserAPIView(APIView):
 
 
 class ObtainTokenView(APIView):
-    '''Получение токена авторизации.'''
+    """Получение токена авторизации."""
 
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)

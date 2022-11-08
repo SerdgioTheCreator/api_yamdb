@@ -15,7 +15,7 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         (ROLE_USER, 'Пользователь'),
         (ROLE_MODERATOR, 'Модератор'),
-        (ROLE_ADMIN, 'Администратор')
+        (ROLE_ADMIN, 'Администратор'),
     )
     username = models.CharField(
         max_length=AUTH_USERNAME_MAXLENGTH,

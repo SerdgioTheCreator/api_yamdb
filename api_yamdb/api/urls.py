@@ -2,8 +2,8 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (CategoriesListView, CommentViewSet, GenreListView,
-                    ReviewViewSet, TitleListView, UserViewSet,
-                    RegisterUserAPIView, ObtainTokenView)
+                    ObtainTokenView, RegisterUserAPIView, ReviewViewSet,
+                    TitleListView, UserViewSet)
 
 
 api_v1_router = DefaultRouter()
@@ -29,6 +29,5 @@ auth_urls = [
 
 urlpatterns = [
     path('v1/', include(api_v1_router.urls)),
-    # Authorization
     path('v1/auth/', include(auth_urls)),
 ]
