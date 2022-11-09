@@ -19,6 +19,8 @@ from .serializers import (CategoriesSerializer, CommentSerializer,
                           RegisterSerializer, ReviewSerializer,
                           TitleSerializer, UserSerializer)
 from .utils import create_and_send_code
+from api_yamdb.settings import (ERR_USERNAME_EXISTS,
+                                ERR_EMAIL_EXISTS)
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
@@ -128,13 +130,17 @@ class RegisterUserAPIView(APIView):
             user, created = User.objects.get_or_create(
                 **serializer.validated_data
             )
-        except IntegrityError as error:
-            field = str(error).split('.')[-1]
+        except IntegrityError:
+            email = serializer.validated_data.get('email')
+            error = (
+                ERR_EMAIL_EXISTS if User.objects.filter(email=email).exists()
+                else ERR_USERNAME_EXISTS
+            )
             return Response(
-                {'Ошибка': f'Пользователь с таким {field} уже существует.'},
+                {'Ошибка': error},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        create_and_send_code(user.username)
+        create_and_send_code(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -144,7 +150,7 @@ class ObtainTokenView(APIView):
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
+        username = serializer.validated_data.get('username')
         user = get_object_or_404(User, username=username)
         if not user.confirmation_code:
             return Response(

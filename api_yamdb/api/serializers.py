@@ -8,7 +8,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
                                 AUTH_EMAIL_MAXLENGTH,
                                 AUTH_CONF_CODE_MAXLENGTH)
-from .validators import UsernameValidator
+from .validators import validate_username
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -99,7 +99,7 @@ class AuthSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=AUTH_USERNAME_MAXLENGTH,
         required=True,
-        validators=(UsernameValidator(),)
+        validators=(validate_username,)
     )
 
 
