@@ -127,3 +127,7 @@ TITLE_NAME_LENGTH = 300
 NAME_LENGTH = 256
 
 SLUG_LENGTH = 50
+
+ERR_EMAIL_EXISTS = 'Пользователь с таким email уже существует.'
+
+ERR_USERNAME_EXISTS = 'Пользователь с таким username уже существует.'

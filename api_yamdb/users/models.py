@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.validators import UsernameValidator
+from api.validators import validate_username
 from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
                                 AUTH_EMAIL_MAXLENGTH,
                                 AUTH_CONF_CODE_MAXLENGTH)
@@ -20,7 +20,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=AUTH_USERNAME_MAXLENGTH,
         unique=True,
-        validators=(UsernameValidator(),),
+        validators=(validate_username,),
         error_messages={'unique': "Такой пользователь уже зарегистрирован."},
         verbose_name='Имя пользователя'
     )
@@ -36,7 +36,7 @@ class User(AbstractUser):
         verbose_name='О себе'
     )
     role = models.CharField(
-        max_length=max(len(role[0]) for role in ROLE_CHOICES),
+        max_length=max(len(role) for role, verbose in ROLE_CHOICES),
         choices=ROLE_CHOICES,
         default=ROLE_USER,
         verbose_name='Ролевая группа'
