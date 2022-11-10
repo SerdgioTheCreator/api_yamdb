@@ -16,7 +16,6 @@ class TitleChangeList(ChangeList):
                                               list_per_page, list_max_show_all, list_editable,
                                               model_admin, sortable_by,)
 
-        # these need to be defined here, and not in ItemAdmin
         self.list_display = ['pk', 'name', 'year',
                              'category', 'gig_genre']
         self.list_display_links = ['name']
