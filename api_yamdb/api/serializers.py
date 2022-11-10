@@ -10,7 +10,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
                                 AUTH_EMAIL_MAXLENGTH,
                                 AUTH_CONF_CODE_MAXLENGTH)
-from .validators import validate_username
+from .validators import validate_username, validate_year
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -43,6 +43,7 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True
     )
     rating = serializers.IntegerField(read_only=True)
+    year = serializers.IntegerField(validators=[validate_year])
 
     class Meta:
         fields = '__all__'
