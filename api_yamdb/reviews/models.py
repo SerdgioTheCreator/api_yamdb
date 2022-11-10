@@ -8,7 +8,7 @@ from django.db import models
 User = get_user_model()
 
 
-class AbstractModel(models.Model):
+class AbstractCategoryGenreModel(models.Model):
     name = models.CharField(
         max_length=settings.NAME_LENGTH,
         unique=True,
@@ -37,27 +37,30 @@ class AbstractReviewCommentModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-id', '-pub_date', ]
+        ordering = ('-id', '-pub_date', )
+
+    def __str__(self):
+        return self.text[:settings.TEXT_CUTTER_30]
 
 
-class Category(AbstractModel):
+class Category(AbstractCategoryGenreModel):
     slug = models.SlugField(
         max_length=settings.SLUG_LENGTH, unique=True,
         verbose_name='Slug категории', db_index=True
     )
 
-    class Meta(AbstractModel.Meta):
+    class Meta(AbstractCategoryGenreModel.Meta):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
 
-class Genre(AbstractModel):
+class Genre(AbstractCategoryGenreModel):
     slug = models.SlugField(
         max_length=settings.SLUG_LENGTH, unique=True,
         verbose_name='Slug жанра', db_index=True
     )
 
-    class Meta(AbstractModel.Meta):
+    class Meta(AbstractCategoryGenreModel.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -133,9 +136,6 @@ class Review(AbstractReviewCommentModel):
             )
         ]
 
-    def __str__(self):
-        return self.text[:settings.TEXT_CUTTER_30]
-
 
 class Comment(AbstractReviewCommentModel):
     review = models.ForeignKey(
@@ -148,6 +148,3 @@ class Comment(AbstractReviewCommentModel):
         default_related_name = 'comments'
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
-
-    def __str__(self):
-        return self.text[:settings.TEXT_CUTTER_30]
