@@ -97,7 +97,7 @@ class Title(models.Model):
         return ', '.join([obj.name for obj in self.genre.all()])
 
     def __str__(self):
-        return self.name[:settings.TEXT_CUTTER_50]
+        return self.name[:settings.TEXT_CUTTER_30]
 
 
 class Review(AbstractReviewCommentModel):

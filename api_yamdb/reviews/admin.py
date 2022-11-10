@@ -18,9 +18,9 @@ class TitleChangeList(ChangeList):
 
         # these need to be defined here, and not in ItemAdmin
         self.list_display = ['pk', 'name', 'year',
-                             'category', 'genre']
+                             'category', 'gig_genre']
         self.list_display_links = ['name']
-        self.list_editable = ['genre', 'year']
+        self.list_editable = ['genre']
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -34,15 +34,12 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 class TitleAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'year',
-                    'category', 'gig_genre')
-    empty_value_display = '-пусто-'
 
-    # def get_changelist(self, request, **kwargs):
-    #     return TitleChangeList
-#
-    # def get_changelist_form(self, request, **kwargs):
-    #     return TitleListForm
+    def get_changelist(self, request, **kwargs):
+        return TitleChangeList
+
+    def get_changelist_form(self, request, **kwargs):
+        return TitleListForm
 
 
 admin.site.register(Title, TitleAdmin)
