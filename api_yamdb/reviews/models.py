@@ -1,11 +1,8 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
-User = get_user_model()
 
 
 class AbstractCategoryGenreModel(models.Model):
@@ -25,7 +22,7 @@ class AbstractCategoryGenreModel(models.Model):
 
 class AbstractReviewCommentModel(models.Model):
     author = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Автор',
     )
@@ -122,7 +119,8 @@ class Review(AbstractReviewCommentModel):
                 limit_value=10,
                 message='Оценка должна быть меньше или равна 10.'
             )
-        ]
+        ],
+        default=None
     )
 
     class Meta(AbstractReviewCommentModel.Meta):
