@@ -25,8 +25,8 @@ def category_import():
         for row in reader:
             print(row)
             category = Category.objects.create(id=row[0],
-                                                 name=row[1],
-                                                 slug=row[2])
+                                               name=row[1],
+                                               slug=row[2])
             category.save()
 
 
