@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'reviews',
     'users',
     'api',
+    # используется для импорта из csv файла
     'django_extensions',
 ]
 
@@ -128,6 +129,8 @@ TITLE_NAME_LENGTH = 300
 NAME_LENGTH = 256
 
 SLUG_LENGTH = 50
+
+DEFAULT_SCORE_VALUE = 1
 
 ERR_EMAIL_EXISTS = 'Пользователь с таким email уже существует.'
 

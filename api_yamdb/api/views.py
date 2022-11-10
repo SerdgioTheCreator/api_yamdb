@@ -44,7 +44,7 @@ class TitleListView(viewsets.ModelViewSet):
     permission_classes = (AdminOrReadOnly, )
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_class = TitleFilter
-    ordering_fields = ['queryset']
+    ordering_fields = ('id', )
 
 
 class GenreListView(CreateDestroyListViewSet):

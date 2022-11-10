@@ -131,7 +131,7 @@ class Review(AbstractReviewCommentModel):
                 message='Оценка должна быть меньше или равна 10.'
             )
         ],
-        default=None
+        default=settings.DEFAULT_SCORE_VALUE
     )
 
     class Meta(AbstractReviewCommentModel.Meta):
