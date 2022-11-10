@@ -1,4 +1,4 @@
-from datetime import datetime
+
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -47,12 +47,6 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
-
-    def validate_year(self, attrs):
-        year = datetime.now().year
-        if attrs > year:
-            raise serializers.ValidationError("Проверьте правильность года!")
-        return attrs
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
