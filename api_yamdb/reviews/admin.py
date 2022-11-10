@@ -1,33 +1,6 @@
 from django.contrib import admin
-from django.contrib.admin.views.main import ChangeList
 
-from reviews.forms import TitleListForm
-from .models import Category, Genre, Title, Review, Comment
-
-
-class TitleChangeList(ChangeList):
-
-    def __init__(self, request, model, list_display, list_display_links,
-                 list_filter, date_hierarchy, search_fields,
-                 list_select_related, list_per_page, list_max_show_all,
-                 list_editable, model_admin, sortable_by,):
-        super(TitleChangeList, self).__init__(request, model,
-                                              list_display,
-                                              list_display_links,
-                                              list_filter,
-                                              date_hierarchy,
-                                              search_fields,
-                                              list_select_related,
-                                              list_per_page,
-                                              list_max_show_all,
-                                              list_editable,
-                                              model_admin,
-                                              sortable_by,)
-
-        self.list_display = ['pk', 'name', 'year',
-                             'category', 'gig_genre']
-        self.list_display_links = ['name']
-        self.list_editable = ['genre']
+from .models import Category, Genre, Title, Review, Comment, TitleGenre
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -35,18 +8,30 @@ class CategoryAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class TitleGenreInline(admin.TabularInline):
+    model = TitleGenre
+    extra = 1
+
+
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
     empty_value_display = '-пусто-'
+    inlines = [
+        TitleGenreInline,
+    ]
 
 
 class TitleAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name', 'year',
+                    'category', 'description', 'genre_list')
+    inlines = [
+        TitleGenreInline,
+    ]
+    exclude = ('genre',)
 
-    def get_changelist(self, request, **kwargs):
-        return TitleChangeList
-
-    def get_changelist_form(self, request, **kwargs):
-        return TitleListForm
+    def genre_list(self, obj):
+        return ', '.join([obj.name for obj in obj.genre.all()])
+    genre_list.short_description = 'Жанры'
 
 
 admin.site.register(Title, TitleAdmin)

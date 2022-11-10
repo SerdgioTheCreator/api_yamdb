@@ -90,11 +90,25 @@ class Title(models.Model):
         verbose_name_plural = 'Произведения'
         ordering = ('-name',)
 
-    def gig_genre(self):
-        return ', '.join([obj.name for obj in self.genre.all()])
-
     def __str__(self):
         return self.name[:settings.TEXT_CUTTER_30]
+
+
+class TitleGenre(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        verbose_name='Жанр'
+    )
+
+    class Meta:
+        verbose_name = 'Жанр произведения'
+        verbose_name_plural = 'Жанры произведения'
 
 
 class Review(AbstractReviewCommentModel):
