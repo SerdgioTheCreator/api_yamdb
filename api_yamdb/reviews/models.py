@@ -122,7 +122,8 @@ class Review(AbstractReviewCommentModel):
                 limit_value=10,
                 message='Оценка должна быть меньше или равна 10.'
             )
-        ]
+        ],
+        default=None
     )
 
     class Meta(AbstractReviewCommentModel.Meta):
