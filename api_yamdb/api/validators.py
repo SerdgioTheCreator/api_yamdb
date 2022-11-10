@@ -16,6 +16,7 @@ def validate_username(value):
         )
     if value == 'me':
         raise ValidationError('Имя пользователя "me" недоступно.')
+    return value
 
 
 def validate_year(value):

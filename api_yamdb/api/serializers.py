@@ -98,11 +98,15 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('review', )
 
 
-class AuthSerializer(serializers.Serializer):
+class ValidateUsernameMixin:
+    def validate_username(self, value):
+        return validate_username(value)
+
+
+class AuthSerializer(serializers.Serializer, ValidateUsernameMixin):
     username = serializers.CharField(
         max_length=AUTH_USERNAME_MAXLENGTH,
-        required=True,
-        validators=(validate_username,)
+        required=True
     )
 
 
