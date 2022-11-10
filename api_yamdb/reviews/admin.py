@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 
-from .models import Category, Genre, Title, Review, Comment
 from reviews.forms import TitleListForm
+from .models import Category, Genre, Title, Review, Comment
 
 
 class TitleChangeList(ChangeList):
