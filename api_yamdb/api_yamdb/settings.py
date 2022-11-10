@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'reviews',
     'users',
     'api',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,4 @@ SLUG_LENGTH = 50
 ERR_EMAIL_EXISTS = 'Пользователь с таким email уже существует.'
 
 ERR_USERNAME_EXISTS = 'Пользователь с таким username уже существует.'
+

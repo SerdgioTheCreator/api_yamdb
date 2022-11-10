@@ -1,4 +1,4 @@
-from reviews.models import Review, Genre, Categories, Title, Comment
+from reviews.models import Review, Genre, Category, Title, Comment
 import csv
 
 from users.models import User
@@ -21,10 +21,10 @@ def category_import():
     with open('static/data/category.csv', encoding='utf-8') as file:
         reader = csv.reader(file)
         next(reader)  # Advance past the header
-        Categories.objects.all().delete()
+        Category.objects.all().delete()
         for row in reader:
             print(row)
-            category = Categories.objects.create(id=row[0],
+            category = Category.objects.create(id=row[0],
                                                  name=row[1],
                                                  slug=row[2])
             category.save()
@@ -37,7 +37,7 @@ def title_import():
         Title.objects.all().delete()
         for row in reader:
             print(row)
-            category = Categories.objects.get(id=row[3])
+            category = Category.objects.get(id=row[3])
             title = Title.objects.create(id=row[0],
                                          name=row[1],
                                          year=row[2],

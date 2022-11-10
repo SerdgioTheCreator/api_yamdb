@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
@@ -18,6 +20,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
+        extra_kwargs = {'slug': {'required': True}}
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -25,6 +28,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
+        extra_kwargs = {'slug': {'required': True}}
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -43,6 +47,12 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+    def validate_year(self, attrs):
+        year = datetime.now().year
+        if attrs > year:
+            raise serializers.ValidationError("Проверьте правильность года!")
+        return attrs
 
     def to_representation(self, instance):
         response = super().to_representation(instance)

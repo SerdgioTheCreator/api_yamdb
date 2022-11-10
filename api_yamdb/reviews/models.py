@@ -14,6 +14,10 @@ class AbstractCategoryGenreModel(models.Model):
         unique=True,
         verbose_name='Название'
     )
+    slug = models.SlugField(
+        max_length=settings.SLUG_LENGTH, unique=True,
+        verbose_name='Slug', db_index=True
+    )
 
     class Meta:
         abstract = True
@@ -44,10 +48,6 @@ class AbstractReviewCommentModel(models.Model):
 
 
 class Category(AbstractCategoryGenreModel):
-    slug = models.SlugField(
-        max_length=settings.SLUG_LENGTH, unique=True,
-        verbose_name='Slug категории', db_index=True
-    )
 
     class Meta(AbstractCategoryGenreModel.Meta):
         verbose_name = 'Категория'
@@ -55,10 +55,6 @@ class Category(AbstractCategoryGenreModel):
 
 
 class Genre(AbstractCategoryGenreModel):
-    slug = models.SlugField(
-        max_length=settings.SLUG_LENGTH, unique=True,
-        verbose_name='Slug жанра', db_index=True
-    )
 
     class Meta(AbstractCategoryGenreModel.Meta):
         verbose_name = 'Жанр'
@@ -76,7 +72,8 @@ class Title(models.Model):
             MinValueValidator(1)
         ],
         null=True,
-        verbose_name='Год создания произведения'
+        verbose_name='Год создания произведения',
+        db_index=True
     )
     description = models.TextField(verbose_name='Описание произведения')
     genre = models.ManyToManyField(
@@ -98,6 +95,9 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
         ordering = ('-name',)
+
+    def gig_genre(self):
+        return ', '.join([obj.name for obj in self.genre.all()])
 
     def __str__(self):
         return self.name[:settings.TEXT_CUTTER_50]
