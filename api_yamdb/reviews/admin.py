@@ -27,7 +27,6 @@ class TitleAdmin(admin.ModelAdmin):
     inlines = [
         TitleGenreInline,
     ]
-    exclude = ('genre',)
 
     def genre_list(self, obj):
         return ', '.join([obj.name for obj in obj.genre.all()])
