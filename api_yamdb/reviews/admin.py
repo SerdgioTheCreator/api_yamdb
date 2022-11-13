@@ -16,9 +16,6 @@ class TitleGenreInline(admin.TabularInline):
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
     empty_value_display = '-пусто-'
-    inlines = [
-        TitleGenreInline,
-    ]
 
 
 class TitleAdmin(admin.ModelAdmin):
