@@ -17,9 +17,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api',
     'reviews',
     'users',
+    'api',
+    # используется для импорта из csv файла
     'django_extensions',
 ]
 
@@ -92,12 +93,22 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 AUTH_USER_MODEL = 'users.User'
 
+AUTH_USERNAME_MAXLENGTH = 150
+
+AUTH_EMAIL_MAXLENGTH = 254
+
+AUTH_CONF_CODE_MAXLENGTH = 5
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 SIMPLE_JWT = {
@@ -109,5 +120,18 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-
 EMAIL_CONFIRMATION = 'admin@reviews.com'
+
+TEXT_CUTTER_30 = 30
+
+TITLE_NAME_LENGTH = 300
+
+NAME_LENGTH = 256
+
+SLUG_LENGTH = 50
+
+DEFAULT_SCORE_VALUE = 1
+
+ERR_EMAIL_EXISTS = 'Пользователь с таким email уже существует.'
+
+ERR_USERNAME_EXISTS = 'Пользователь с таким username уже существует.'

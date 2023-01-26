@@ -1,30 +1,38 @@
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 from rest_framework.validators import UniqueTogetherValidator
 
-from reviews.models import Categories, Comment, Genre, Review, Title
+from api_yamdb.settings import (AUTH_USERNAME_MAXLENGTH,
+                                AUTH_EMAIL_MAXLENGTH,
+                                AUTH_CONF_CODE_MAXLENGTH)
+from .validators import validate_username, validate_year
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.models import User
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
-        model = Categories
+        model = Category
+        extra_kwargs = {'slug': {'required': True}}
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    # slug = serializers.SlugField()
 
     class Meta:
         fields = ('name', 'slug')
         model = Genre
+        extra_kwargs = {'slug': {'required': True}}
 
 
 class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug',
-        queryset=Categories.objects.all()
+        queryset=Category.objects.all()
     )
 
     genre = serializers.SlugRelatedField(
@@ -33,6 +41,7 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True
     )
     rating = serializers.IntegerField(read_only=True)
+    year = serializers.IntegerField(validators=[validate_year])
 
     class Meta:
         fields = '__all__'
@@ -62,6 +71,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     title = serializers.HiddenField(default=TitleDefault())
+    score = serializers.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
 
     class Meta:
         fields = '__all__'
@@ -73,20 +85,64 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         ]
 
-    # def validate_score(self, score):
-    #     if not 1 <= score <= 10:
-    #         raise serializers.ValidationError(
-    #             'Score should be set in the range from 1 to 10.')
-    #     return score
-
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
     )
-    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Comment
         fields = '__all__'
+        read_only_fields = ('review', )
+
+
+class ValidateUsernameMixin:
+    def validate_username(self, value):
+        return validate_username(value)
+
+
+class AuthSerializer(serializers.Serializer, ValidateUsernameMixin):
+    username = serializers.CharField(
+        max_length=AUTH_USERNAME_MAXLENGTH,
+        required=True
+    )
+
+
+class RegisterSerializer(AuthSerializer):
+    email = serializers.EmailField(
+        max_length=AUTH_EMAIL_MAXLENGTH,
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+
+class GetTokenSerializer(AuthSerializer):
+    confirmation_code = serializers.CharField(
+        max_length=AUTH_CONF_CODE_MAXLENGTH,
+        required=True
+    )
+
+    def validate(self, data):
+        try:
+            username = data.get('username')
+            user = User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            raise NotFound(
+                detail=f'Пользователя с именем {username} не существует.'
+            )
+        if user.confirmation_code != data.get('confirmation_code'):
+            raise serializers.ValidationError(
+                'Некорректный код подтверждения.')
+        return data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name',
+                  'last_name', 'bio', 'role')
